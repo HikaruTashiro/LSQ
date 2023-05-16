@@ -71,11 +71,11 @@ void lsq::get_info(std::string &lsq_info, int precision)
     std::stringstream stream;
     lsq_info.clear();
     stream << std::fixed << std::setprecision(precision) << pearson;
-    lsq_info = "pearson = ";
+    lsq_info = "Coeficiente de correlacao de Pearson = ";
     lsq_info += stream.str();
     stream.str("");
     stream << pearson_sqr;
-    lsq_info += "\npearson_sqr = ";
+    lsq_info += "\nCoeficiente de determinacao de Pearson = ";
     lsq_info += stream.str();
     stream.str("");
     stream << sum_x;
