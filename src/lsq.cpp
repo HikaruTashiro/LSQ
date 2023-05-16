@@ -1,8 +1,11 @@
 #include "lsq.h"
+#include <ios>
+#include <sstream>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <cmath>
+#include <iomanip>
 
 
 lsq::lsq()
@@ -24,7 +27,7 @@ void lsq::associate_data(std::vector<std::pair<float, float>> &point_data)
     #define x first
     #define y second 
 
-    float mean_x{}, mean_y{}, dif_x, desv_x, desv_y, sum_yy{};
+    float mean_x{}, mean_y{}, desv_x, desv_y, sum_yy{};
     sum_x = sum_y = sum_xx = sum_xy = 0.0f;
 
     for (auto elem : point_data)
@@ -51,31 +54,47 @@ void lsq::associate_data(std::vector<std::pair<float, float>> &point_data)
     line[1] = (sum_y * sum_xx - sum_x * sum_xy) / denum; 
 }
 
-void lsq::get_fuction_expr(std::string& expression)
+void lsq::get_fuction_expr(std::string& expression, int precision)
 {
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(precision) << line[0];
     expression.clear();
-    expression = std::to_string(line[0]);
+    expression = stream.str();
     expression += " * x + ";
-    expression += std::to_string(line[1]);
+    stream.str("");
+    stream << line[1];
+    expression += stream.str();
 }
 
-void lsq::get_info(std::string &lsq_info)
+void lsq::get_info(std::string &lsq_info, int precision)
 {
+    std::stringstream stream;
     lsq_info.clear();
+    stream << std::fixed << std::setprecision(precision) << pearson;
     lsq_info = "pearson = ";
-    lsq_info += std::to_string(pearson);
+    lsq_info += stream.str();
+    stream.str("");
+    stream << pearson_sqr;
     lsq_info += "\npearson_sqr = ";
-    lsq_info += std::to_string(pearson_sqr);
+    lsq_info += stream.str();
+    stream.str("");
+    stream << sum_x;
     lsq_info += "\nsum_x = ";
-    lsq_info += std::to_string(sum_x);
+    lsq_info += stream.str();
+    stream.str("");
+    stream << sum_y;
     lsq_info += "\nsum_y = ";
-    lsq_info += std::to_string(sum_y);
+    lsq_info += stream.str();
+    stream.str("");
+    stream << sum_xy;
     lsq_info += "\nsum_xy = ";
-    lsq_info += std::to_string(sum_xy);
+    lsq_info += stream.str();
+    stream.str("");
+    stream << sum_xx;
     lsq_info += "\nsum_xx = ";
-    lsq_info += std::to_string(sum_xx);
+    lsq_info += stream.str();
     lsq_info += "\nNumero de Pares = ";
-    lsq_info += n_pairs;
+    lsq_info += std::to_string(n_pairs);
 }
 
 void lsq::generate_graph(std::array<float,2> &x_axis, std::array<float,2> &y_axis,

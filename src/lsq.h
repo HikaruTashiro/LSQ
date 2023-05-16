@@ -24,8 +24,8 @@ struct lsq
                         std::vector<float> &x_axis_points, std::vector<float> &y_axis_points,
                         std::vector<std::pair<float, float>> &point_data);
         void associate_data(std::vector<std::pair<float, float>> &point_data);
-        void get_fuction_expr(std::string& expression);
-        void get_info(std::string& lsq_info);
+        void get_fuction_expr(std::string& expression, int precision);
+        void get_info(std::string& lsq_info, int precision);
 
         private:
         pair_iter find_max_x(const pair_iter& begin, const pair_iter&end);

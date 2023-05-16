@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "imgui/imgui.h"
+#include "imgui/imgui_stdlib.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/implot.h"
@@ -125,7 +126,9 @@ void Cleanup_ImGui()
 
 void display()
 {
+    static int precision = 3;
     static int number = 5;
+    static std::string ids[20];
     static std::string expression;
     static std::string info;
     static std::array<float, 2> x_axis;
@@ -139,13 +142,20 @@ void display()
 
     if(setup)
     {
-        solver.get_fuction_expr(expression);
+        for (int i = 0; i < 20; i++)
+        {
+            ids[i] = 'P';
+            ids[i] += std::to_string(i + 1);
+            ids[i] += "(x,y)";
+        }
+        solver.get_fuction_expr(expression, precision);
         solver.generate_graph(x_axis, y_axis, points_x_axis, points_y_axis, coord_pairs);
-        solver.get_info(info);
+        solver.get_info(info, precision);
         setup = false;
     }
 
     ImGui::Begin("Opcoes", NULL, ImGuiWindowFlags_NoCollapse);
+    ImGui::SliderInt("Precisao", &precision, 2, 10);
     ImGui::SliderInt("Numero de Pares", &number, 3, 20);
 
     while (coord_pairs.size() <  (std::size_t) number)
@@ -157,7 +167,7 @@ void display()
     if(ImGui::TreeNode("Coordenadas"))
     {
         for (int i = 0; i < number; i++)
-            ImGui::InputFloat2("(x,y)", (float*) &coord_pairs[i]); 
+            ImGui::InputFloat2(ids[i].data(), (float*) &coord_pairs[i]); 
         ImGui::TreePop();
     }
 
@@ -165,8 +175,8 @@ void display()
     {
         solver.associate_data(coord_pairs);
         solver.generate_graph(x_axis, y_axis, points_x_axis, points_y_axis, coord_pairs);
-        solver.get_fuction_expr(expression);
-        solver.get_info(info);
+        solver.get_fuction_expr(expression, precision);
+        solver.get_info(info, precision);
     }
 
     if(ImPlot::BeginPlot("Grafico"))
@@ -175,6 +185,8 @@ void display()
         ImPlot::PlotScatter("Pares de Pontos", points_x_axis.data(),points_y_axis.data(),points_x_axis.size());
         ImPlot::EndPlot();
     }
+
+    ImGui::InputTextMultiline("Info", &info, ImVec2(0,0), ImGuiInputTextFlags_ReadOnly);
 
     ImGui::End();
 }
